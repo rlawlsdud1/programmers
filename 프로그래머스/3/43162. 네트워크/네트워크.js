@@ -1,14 +1,13 @@
 function solution(n, computers) {
   let count = 0;
-
   const visited = new Array(n).fill(false);
 
-  function dfs(vertex) {
+  function DFS(vertex) {
     visited[vertex] = true;
 
-    for (let i = 0; i < n; i++) {
+    for (let i = 0; i < computers[vertex].length; i++) {
       if (!visited[i] && computers[vertex][i]) {
-        dfs(i);
+        DFS(i);
       }
     }
   }
@@ -16,7 +15,7 @@ function solution(n, computers) {
   for (let i = 0; i < computers.length; i++) {
     if (!visited[i]) {
       count++;
-      dfs(i);
+      DFS(i);
     }
   }
 
