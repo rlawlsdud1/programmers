@@ -1,25 +1,33 @@
 function solution(number, limit, power) {
-  // 약수의 개수를 세고, 약수의 개수가 제한수치를 넘으면 정한 공격력 return하는 함수
-  function countDivisor(a) {
-    let count = 0;
-    for (let i = 1; i <= Math.sqrt(a); i++) {
-      if (a % i === 0) {
+  const divisorCountArr = [];
+  for (let i = 1; i <= number; i++) {
+    divisorCountArr.push(getDivisorCount(i));
+  }
+
+  let answer = 0;
+  for (let i = 0; i < divisorCountArr.length; i++) {
+    if (divisorCountArr[i] > limit) {
+      answer = answer + power;
+    } else {
+      answer = answer + divisorCountArr[i];
+    }
+  }
+  return answer;
+}
+
+function getDivisorCount(number) {
+  if (number === 1) {
+    return 1;
+  }
+
+  let count = 0;
+  for (let i = 1; i <= Math.sqrt(number); i++) {
+    if (number % i === 0) {
+      count++;
+      if (i !== Math.sqrt(number)) {
         count++;
-        if (i !== a / i) {
-          count++;
-        }
-      }
-      if (count > limit) {
-        return power;
       }
     }
-    return count;
   }
-
-  const attack = [];
-  for (let i = 1; i <= number; i++) {
-    attack.push(countDivisor(i));
-  }
-
-  return attack.reduce((total, e) => total + e, 0);
+  return count;
 }
