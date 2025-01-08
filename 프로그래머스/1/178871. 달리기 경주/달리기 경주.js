@@ -1,5 +1,3 @@
-// 2 ≤ callings의 길이 ≤ 1,000,000
-
 function solution(players, callings) {
   const playersObj = {};
   players.forEach((player, i) => {
