@@ -1,6 +1,4 @@
 function solution(msg) {
-  var answer = [];
-
   const dictionary = {
     A: 1,
     B: 2,
@@ -29,30 +27,36 @@ function solution(msg) {
     Y: 25,
     Z: 26,
   };
-  let idx = 27;
-  let i = 0;
+  const answer = [];
+
+  let idx = 27; // 사전에 넣을 idx
+  let i = 0; // 주어진 문자열의 index를 추적할 i
 
   while (i < msg.length) {
-    let count = 1;
-    let current = msg[i];
     if (i === msg.length - 1) {
-      answer.push(dictionary[current]);
+      answer.push(dictionary[msg[i]]);
       break;
     }
+    let current = msg[i];
     let next = msg[i + 1];
+    let count = 0;
 
-    while (dictionary[current + next] && i + count < msg.length) {
-      current = current + next;
+    while (dictionary[current + next]) {
       count++;
-      next = msg[i + count];
+      current = current + next;
+      next = msg[i + 1 + count];
     }
 
     if (!dictionary[current + next]) {
       dictionary[current + next] = idx;
+      idx++;
     }
+
     answer.push(dictionary[current]);
-    idx++;
-    i = i + count;
+
+    i = i + 1 + count;
   }
+  // console.log(dictionary);
+
   return answer;
 }
