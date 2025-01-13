@@ -1,24 +1,23 @@
 function solution(elements) {
-  const sumArr = [];
-  for (let i = 1; i <= elements.length; i++) {
-    for (let j = 0; j < elements.length; j++) {
-      if (elements.length < j + i) {
-        let sum = 0;
-        elements
-          .slice(j, j + i)
-          .concat(elements.slice(0, i + j - elements.length))
-          .forEach((e) => {
-            sum += e;
-          });
-        sumArr.push(sum);
+  const len = elements.length;
+  const setOfSum = new Set();
+  for (let i = 1; i <= len; i++) {
+    for (let j = 0; j < len; j++) {
+      if (i + j >= len) {
+        const subsequence = elements
+          .slice(j)
+          .concat(elements.slice(0, (j + i) % len));
+
+        setOfSum.add(getSumOfArr(subsequence));
       } else {
-        let sum = 0;
-        elements.slice(j, j + i).forEach((e) => {
-          sum += e;
-        });
-        sumArr.push(sum);
+        const subsequence = elements.slice(j, (j + i) % len);
+        setOfSum.add(getSumOfArr(subsequence));
       }
     }
   }
-  return new Set(sumArr).size;
+  return setOfSum.size;
+}
+
+function getSumOfArr(array) {
+  return array.reduce((arr, cur) => arr + cur, 0);
 }
