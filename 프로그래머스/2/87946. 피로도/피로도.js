@@ -4,7 +4,6 @@ function solution(k, dungeons) {
 
   function dfs(hp, round) {
     answer = Math.max(answer, round);
-
     for (let i = 0; i < dungeons.length; i++) {
       if (!visited[i] && dungeons[i][0] <= hp) {
         visited[i] = true;
