@@ -1,23 +1,22 @@
 function solution(n, computers) {
-  let count = 0;
-  const visited = new Array(n).fill(false);
+  answer = 0;
+  const visited = Array.from({ length: n }).fill(false);
 
   function DFS(vertex) {
-    visited[vertex] = true;
-
-    for (let i = 0; i < computers[vertex].length; i++) {
+    for (let i = 0; i < n; i++) {
       if (!visited[i] && computers[vertex][i]) {
+        visited[i] = true;
         DFS(i);
       }
     }
   }
 
-  for (let i = 0; i < computers.length; i++) {
+  for (let i = 0; i < n; i++) {
     if (!visited[i]) {
-      count++;
       DFS(i);
+      answer++;
     }
   }
 
-  return count;
+  return answer;
 }
