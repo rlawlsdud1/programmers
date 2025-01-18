@@ -1,40 +1,35 @@
 function solution(n, edge) {
-  const graph = [[]];
-  for (let i = 1; i <= n; i++) {
-    graph[i] = [];
-  }
+  const adjacantList = {};
+  edge.forEach((e) => {
+    adjacantList[e[0]]
+      ? adjacantList[e[0]].push(e[1])
+      : (adjacantList[e[0]] = [e[1]]);
+    adjacantList[e[1]]
+      ? adjacantList[e[1]].push(e[0])
+      : (adjacantList[e[1]] = [e[0]]);
+  });
+
   const visited = Array.from({ length: n + 1 }).fill(false);
+  const distances = Array.from({ length: n + 1 }).fill(0);
 
-  for (let i = 0; i < edge.length; i++) {
-    graph[edge[i][0]].push(edge[i][1]);
-    graph[edge[i][1]].push(edge[i][0]);
-  }
+  const queue = [];
+  queue.push(1); // 1번 노드부터 시작
+  visited[1] = true;
 
-  function bfs(startNode) {
-    const queue = [];
-    const distances = Array.from({ length: n + 1 }).fill(0);
+  while (queue.length) {
+    const node = queue.shift();
+    const adjacantNodes = adjacantList[node];
 
-    visited[startNode] = true;
-    queue.push(startNode);
-
-    while (queue.length > 0) {
-      const node = queue.shift();
-
-      const adjacentNodes = graph[node];
-      for (let i = 0; i < adjacentNodes.length; i++) {
-        const adjacentNode = adjacentNodes[i];
-        if (!visited[adjacentNode]) {
-          visited[adjacentNode] = true;
-          queue.push(adjacentNode);
-          distances[adjacentNode] = distances[node] + 1;
-        }
+    for (let i = 0; i < adjacantNodes.length; i++) {
+      if (!visited[adjacantNodes[i]]) {
+        visited[adjacantNodes[i]] = true;
+        queue.push(adjacantNodes[i]);
+        distances[adjacantNodes[i]] = distances[node] + 1;
       }
     }
-
-    return distances;
   }
 
-  const distances = bfs(1).sort((a, b) => a - b);
+  distances.sort((a, b) => a - b);
 
   return distances.filter((v) => v === distances.at(-1)).length;
 }
