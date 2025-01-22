@@ -1,25 +1,21 @@
 function solution(n, computers) {
+  let answer = 0;
+
   const visited = Array.from({ length: n }).fill(false);
 
-  function dfs(vertex) {
-    for (let i = 0; i < n; i++) {
+  function DFS(vertex) {
+    for (let i = 0; i < computers[vertex].length; i++) {
       if (!visited[i] && computers[vertex][i]) {
         visited[i] = true;
-        dfs(i);
+        DFS(i);
       }
     }
   }
 
-  let answer = 0;
-
-  // 0부터 돌기 시작
-  // dfs(0) 호출
-  // 첫번째 컴퓨터와 연결돼있는 것들 다 방문처리
-  // 다음 반복때는 연결 안돼있는 컴퓨터부터 돌기 시작
-  // 연결 한사이클 끝나면 answer++
   for (let i = 0; i < n; i++) {
+    // 방문 안했으면 한 곳으로 쭉 뚫고 방문처리.
     if (!visited[i]) {
-      dfs(i);
+      DFS(i);
       answer++;
     }
   }
