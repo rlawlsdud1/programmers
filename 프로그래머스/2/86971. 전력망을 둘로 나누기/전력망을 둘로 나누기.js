@@ -1,55 +1,43 @@
 function solution(n, wires) {
   let answer = Infinity;
-  const adjacantList = {};
-  for (let k = 1; k <= n; k++) {
-    adjacantList[k] = [];
-  }
-  for (let k = 0; k < wires.length; k++) {
-    const [from, to] = wires[k];
+  const adjacantList = Array.from({ length: n + 1 }, () => []);
+  wires.forEach((v) => {
+    const [from, to] = v;
     adjacantList[from].push(to);
     adjacantList[to].push(from);
-  }
+  });
 
-  for (let i = 0; i < wires.length; i++) {
-    const [from, at] = wires[i];
-    const deepCopy = JSON.parse(JSON.stringify(adjacantList));
-    deepCopy[from] = deepCopy[from].filter((v) => v !== at);
-    deepCopy[at] = deepCopy[at].filter((v) => v !== from);
+  wires.forEach((v) => {
+    const [from, to] = v;
+    const adjacantListCopy = JSON.parse(JSON.stringify(adjacantList));
+    adjacantListCopy[from] = adjacantListCopy[from].filter((v) => v !== to);
+    adjacantListCopy[to] = adjacantListCopy[to].filter((v) => v !== from);
+
     const visited = Array.from({ length: n + 1 }).fill(false);
+
     function DFS(vertex) {
       if (!visited[vertex]) {
         visited[vertex] = true;
-
-        for (let i = 0; i < deepCopy[vertex].length; i++) {
-          if (!visited[deepCopy[vertex][i]]) {
-            DFS(deepCopy[vertex][i]);
-          }
+        for (let i = 0; i < adjacantListCopy[vertex].length; i++) {
+          DFS(adjacantListCopy[vertex][i]);
         }
       }
     }
-
-    let difference;
-    let another;
-    let count = 0;
-    for (let k = 1; k <= n; k++) {
-      if (!visited[k]) {
-        DFS(k);
-        if (k === 1) {
-          another = n - visited.filter((v) => v === true).length;
-          difference = Math.abs(
-            visited.filter((v) => v === true).length - another
-          );
-        }
-        count++;
+    let network = 0;
+    let temp;
+    for (let i = 1; i <= n; i++) {
+      if (!visited[i]) {
+        DFS(i);
+        network++;
+      }
+      if (i === 1) {
+        temp = Math.abs(2 * visited.filter((v) => v === true).length - n);
       }
     }
-    if (count === 2) {
-      if (difference === 0) {
-        return 0;
-      }
-      answer = Math.min(answer, difference);
+    if (network === 2) {
+      answer = Math.min(answer, temp);
     }
-  }
+  });
 
   return answer;
 }
