@@ -1,12 +1,11 @@
 function solution(tickets) {
-  const answer = [];
   tickets.sort();
+  const answer = [];
   const visited = Array.from({ length: tickets.length }).fill(false);
 
   function DFS(start, path) {
     if (path.length === tickets.length + 1) {
       answer.push([...path]);
-      return;
     }
     for (let i = 0; i < tickets.length; i++) {
       if (!visited[i] && tickets[i][0] === start) {
@@ -22,5 +21,5 @@ function solution(tickets) {
 
   DFS("ICN", ["ICN"]);
 
-  return answer[0];
+  return answer[0]
 }
