@@ -1,19 +1,18 @@
 function solution(numbers, target) {
   let answer = 0;
 
-  function DFS(sum, count) {
+  function DFS(number, count) {
     if (count === numbers.length) {
-      if (sum === target) {
+      if (number === target) {
         answer++;
       }
       return;
     }
 
-    DFS(sum + numbers[count], count + 1);
-    DFS(sum - numbers[count], count + 1);
+    DFS(number + numbers[count], count + 1);
+    DFS(number - numbers[count], count + 1);
   }
 
   DFS(0, 0);
-
   return answer;
 }
