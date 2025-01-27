@@ -1,11 +1,15 @@
 function solution(n, m, section) {
-  let answer = 0;
-  while (true) {
-    const idx = section.findIndex((v) => v > section[0] + m - 1);
-    answer++;
+  let count = 0;
+
+  while (section.length) {
+    const idx = section.findIndex((v) => v >= section[0] + m);
+    console.log(idx);
+    count++;
+
     if (idx === -1) {
-      return answer;
+      return count;
     }
+
     section = section.slice(idx);
   }
 }
