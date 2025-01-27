@@ -1,16 +1,9 @@
 function solution(n) {
-  // 피보나치(느낌의) 수열이었다
-  // n은 하나 밀린다
+  const fibValues = [1n, 2n];
 
-  function fib(n) {
-    const fibValues = [BigInt(1), BigInt(2)];
-
-    for (let i = 2; i <= n; i++) {
-      fibValues[i] = BigInt(fibValues[i - 1]) + BigInt(fibValues[i - 2]);
-    }
-
-    return fibValues[n - 1];
+  for (let i = 3; i <= n; i++) {
+    fibValues[i - 1] = fibValues[i - 2] + fibValues[i - 3];
   }
 
-  return fib(n) % BigInt(1234567);
+  return Number(fibValues[n - 1] % 1234567n);
 }
