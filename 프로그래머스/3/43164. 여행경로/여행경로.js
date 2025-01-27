@@ -1,6 +1,6 @@
 function solution(tickets) {
-  tickets.sort();
   const answer = [];
+  tickets.sort();
   const visited = Array.from({ length: tickets.length }).fill(false);
 
   function DFS(start, path) {
@@ -8,7 +8,8 @@ function solution(tickets) {
       answer.push([...path]);
     }
     for (let i = 0; i < tickets.length; i++) {
-      if (!visited[i] && tickets[i][0] === start) {
+      // 안쓴 티켓이고, 유효한 티켓이라면
+      if (tickets[i][0] === start && !visited[i]) {
         visited[i] = true;
         path.push(tickets[i][1]);
 
@@ -21,5 +22,5 @@ function solution(tickets) {
 
   DFS("ICN", ["ICN"]);
 
-  return answer[0]
+  return answer[0];
 }
