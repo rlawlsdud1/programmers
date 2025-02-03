@@ -1,21 +1,13 @@
 function solution(priorities, location) {
-  let answer = 0;
-  const savedLocation = [];
-  for (let i = 0; i < priorities.length; i += 1) {
-    savedLocation.push(i);
-  }
-
-  while (priorities.length) {
-    const maxValue = Math.max(...priorities);
-    if (priorities[0] < maxValue) {
-      priorities.push(priorities.shift());
-      savedLocation.push(savedLocation.shift());
+  // 중요도가 높을수록 먼저 실행된다
+  const locAndPrior = priorities.map((v, i) => [v, i]);
+  const complete = [];
+  while (locAndPrior.length) {
+    if (locAndPrior.slice(1).find((v) => v[0] > locAndPrior[0][0])) {
+      locAndPrior.push(locAndPrior.shift());
     } else {
-      answer++;
-      priorities.shift();
-      if (savedLocation.shift() === location) {
-        return answer;
-      }
+      complete.push(locAndPrior.shift());
     }
   }
+  return complete.findIndex((v) => v[1] === location) + 1;
 }
