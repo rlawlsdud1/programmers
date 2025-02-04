@@ -1,27 +1,21 @@
 function solution(prices) {
-  let answer = [];
-  let n = prices.length;
-  let second = 0;
+  const answer = Array.from({ length: prices.length }).fill(0);
+  const stack = [];
 
-  for (let i = 0; i < n; i++) {
-    if (i === n - 1) {
-      answer.push(0);
-      break;
+  for (let i = 0; i < prices.length; i++) {
+    //                     가격이 줄어들었다면
+    while (stack.length && prices[stack.at(-1)] > prices[i]) {
+      const j = stack.pop();
+      answer[j] = i - j;
     }
-    for (let j = i + 1; j <= n - 1; j++) {
-      if (prices[i] <= prices[j]) {
-        second++;
-      } else if (prices[i] > prices[j]) {
-        answer.push(second + 1);
-        second = 0;
-        break;
-      }
 
-      if (j === n - 1) {
-        answer.push(second);
-        second = 0;
-      }
-    }
+    stack.push(i);
   }
+
+  while (stack.length) {
+    const i = stack.pop();
+    answer[i] = prices.length - 1 - i;
+  }
+
   return answer;
 }
