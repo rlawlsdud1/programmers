@@ -3,7 +3,6 @@ function solution(prices) {
   const stack = [];
 
   for (let i = 0; i < prices.length; i++) {
-    //                     가격이 줄어들었다면
     while (stack.length && prices[stack.at(-1)] > prices[i]) {
       const j = stack.pop();
       answer[j] = i - j;
@@ -11,11 +10,14 @@ function solution(prices) {
 
     stack.push(i);
   }
+  // stack에 있는 원소는 끝내 안떨어진 주식의 index
 
   while (stack.length) {
-    const i = stack.pop();
-    answer[i] = prices.length - 1 - i;
+    const j = stack.pop();
+    // prices 의 lastIndex - j 는 j 번째 주식이 안떨어진 기간(초)
+    answer[j] = prices.length - 1 - j;
   }
 
   return answer;
+    
 }
