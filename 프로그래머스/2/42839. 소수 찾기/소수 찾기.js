@@ -1,36 +1,40 @@
 function solution(numbers) {
-  numbers = numbers.split("");
   const visited = Array.from({ length: numbers.length }).fill(false);
-  const setOfNum = new Set();
+  const candidate = [];
 
-  function dfs(number) {
+  function DFS(path) {
+    const joinedPath = Number([...path].join(""));
+    if (path.length && !candidate.includes(joinedPath) && joinedPath) {
+      candidate.push(joinedPath);
+    }
+
     for (let i = 0; i < numbers.length; i++) {
       if (!visited[i]) {
         visited[i] = true;
-        dfs(number + numbers[i]);
-        setOfNum.add(Number(number + numbers[i]));
+        path.push(numbers[i]);
+        DFS(path);
+
         visited[i] = false;
+        path.pop();
       }
     }
   }
 
-  dfs(0);
-
+  DFS([]);
   let answer = 0;
-  const numArr = [...setOfNum];
-  // console.log(numArr);
-  numArr.forEach((v) => {
-    if (isPrime(v)) answer++;
+  candidate.forEach((v) => {
+    if (checkPrimary(v)) {
+      answer++;
+    }
   });
+
   return answer;
 }
 
-function isPrime(number) {
-  if ([0, 1].includes(number)) {
-    return false;
-  }
-  for (let i = 2; i <= Math.sqrt(number); i++) {
-    if (number % i === 0) {
+function checkPrimary(num) {
+  if (num === 1) return false;
+  for (let i = 2; i <= Math.sqrt(num); i++) {
+    if (num % i === 0) {
       return false;
     }
   }
