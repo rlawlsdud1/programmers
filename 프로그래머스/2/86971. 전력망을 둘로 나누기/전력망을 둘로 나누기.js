@@ -1,43 +1,37 @@
 function solution(n, wires) {
-  let answer = Infinity;
   const adjacantList = Array.from({ length: n + 1 }, () => []);
   wires.forEach((v) => {
-    const [from, to] = v;
-    adjacantList[from].push(to);
-    adjacantList[to].push(from);
+    const [from, at] = v;
+    adjacantList[from].push(at);
+    adjacantList[at].push(from);
   });
 
-  wires.forEach((v) => {
-    const [from, to] = v;
-    const adjacantListCopy = JSON.parse(JSON.stringify(adjacantList));
-    adjacantListCopy[from] = adjacantListCopy[from].filter((v) => v !== to);
-    adjacantListCopy[to] = adjacantListCopy[to].filter((v) => v !== from);
+  let answer = Infinity;
 
+  for (let i = 0; i < wires.length; i++) {
+    const copyList = JSON.parse(JSON.stringify(adjacantList));
+    const [from, at] = wires[i];
+    copyList[from] = copyList[from].filter((v) => v !== at);
+    copyList[at] = copyList[at].filter((v) => v !== from);
     const visited = Array.from({ length: n + 1 }).fill(false);
 
-    function DFS(vertex) {
-      if (!visited[vertex]) {
-        visited[vertex] = true;
-        for (let i = 0; i < adjacantListCopy[vertex].length; i++) {
-          DFS(adjacantListCopy[vertex][i]);
+    function DFS(node) {
+      let count = 1;
+
+      for (let i = 0; i < copyList[node].length; i++) {
+        const adjacantNode = copyList[node][i];
+        if (!visited[adjacantNode]) {
+          visited[adjacantNode] = true;
+          count += DFS(adjacantNode);
         }
       }
+
+      return count;
     }
-    let network = 0;
-    let temp;
-    for (let i = 1; i <= n; i++) {
-      if (!visited[i]) {
-        DFS(i);
-        network++;
-      }
-      if (i === 1) {
-        temp = Math.abs(2 * visited.filter((v) => v === true).length - n);
-      }
-    }
-    if (network === 2) {
-      answer = Math.min(answer, temp);
-    }
-  });
+    visited[1] = true;
+    const count = DFS(1);
+    answer = Math.min(answer, Math.abs(n - 2 * count));
+  }
 
   return answer;
 }
