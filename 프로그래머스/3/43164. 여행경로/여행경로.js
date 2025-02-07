@@ -3,24 +3,21 @@ function solution(tickets) {
   tickets.sort();
   const visited = Array.from({ length: tickets.length }).fill(false);
 
-  function DFS(start, path) {
+  function DFS(path) {
     if (path.length === tickets.length + 1) {
       answer.push([...path]);
     }
+
     for (let i = 0; i < tickets.length; i++) {
-      // 안쓴 티켓이고, 유효한 티켓이라면
-      if (tickets[i][0] === start && !visited[i]) {
+      if (!visited[i] && path.at(-1) === tickets[i][0]) {
         visited[i] = true;
         path.push(tickets[i][1]);
-
-        DFS(tickets[i][1], path);
+        DFS(path);
         visited[i] = false;
         path.pop();
       }
     }
   }
-
-  DFS("ICN", ["ICN"]);
-
-  return answer[0];
+  DFS(["ICN"], 0);
+  return answer[0]
 }
