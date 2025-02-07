@@ -1,24 +1,28 @@
 function solution(n, lost, reserve) {
-  // 진짜 잃어버린 애들
-  const realLost = lost
-    .filter((e) => !reserve.includes(e))
-    .sort((a, b) => a - b);
-  // 진짜 빌려줄 수 있는 애들
-  let realReserve = reserve
-    .filter((e) => !lost.includes(e))
-    .sort((a, b) => a - b);
-
-  let answer = n - realLost.length;
-
-  realLost.forEach((e) => {
-    if (realReserve.includes(e - 1)) {
-      answer++;
-      realReserve = realReserve.filter((student) => student !== e - 1);
-    } else if (realReserve.includes(e + 1)) {
-      answer++;
-      realReserve = realReserve.filter((student) => student !== e + 1);
+  const lostArr = Array.from({ length: n }).fill(false);
+  const reserveArr = Array.from({ length: n }).fill(false);
+  lost.forEach((v) => {
+    lostArr[v - 1] = true;
+  });
+  reserve.forEach((v) => {
+    if (lostArr[v - 1]) {
+      lostArr[v - 1] = false;
+      reserveArr[v - 1] = false;
+    } else {
+      reserveArr[v - 1] = true;
     }
   });
+  for (let i = 0; i < n; i++) {
+    if (lostArr[i]) {
+      if (reserveArr[i - 1]) {
+        lostArr[i] = false;
+        reserveArr[i - 1] = false;
+      } else if (reserveArr[i + 1]) {
+        lostArr[i] = false;
+        reserveArr[i + 1] = false;
+      }
+    }
+  }
 
-  return answer;
+  return lostArr.filter((v) => !v).length;
 }
