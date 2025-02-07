@@ -7,6 +7,6 @@ function solution(number, k) {
     }
     stack.push(number[i]);
   }
-  if (k > 0) return stack.slice(0, -k).join("");
-  else return stack.join("");
+  if (!k) return stack.join("");
+  return stack.slice(0, -k).join("");
 }
