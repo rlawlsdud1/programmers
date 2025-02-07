@@ -1,35 +1,31 @@
 function solution(n, edge) {
-  const adjacantList = {};
-  edge.forEach((e) => {
-    adjacantList[e[0]]
-      ? adjacantList[e[0]].push(e[1])
-      : (adjacantList[e[0]] = [e[1]]);
-    adjacantList[e[1]]
-      ? adjacantList[e[1]].push(e[0])
-      : (adjacantList[e[1]] = [e[0]]);
+  const adjacantList = Array.from({ length: n + 1 }, () => []);
+  edge.forEach((v) => {
+    const [from, to] = v;
+    adjacantList[from].push(to);
+    adjacantList[to].push(from);
   });
 
   const visited = Array.from({ length: n + 1 }).fill(false);
   const distances = Array.from({ length: n + 1 }).fill(0);
-
   const queue = [];
-  queue.push(1); // 1번 노드부터 시작
   visited[1] = true;
+  distances[1] = 0;
+  queue.push([1, 0]);
 
   while (queue.length) {
-    const node = queue.shift();
+    const [node, distance] = queue.shift();
     const adjacantNodes = adjacantList[node];
-
     for (let i = 0; i < adjacantNodes.length; i++) {
-      if (!visited[adjacantNodes[i]]) {
-        visited[adjacantNodes[i]] = true;
-        queue.push(adjacantNodes[i]);
-        distances[adjacantNodes[i]] = distances[node] + 1;
+      const adjacantNode = adjacantNodes[i];
+
+      if (!visited[adjacantNode]) {
+        visited[adjacantNode] = true;
+        queue.push([adjacantNode, distance + 1]);
+        distances[adjacantNode] = distance + 1;
       }
     }
   }
-
-  distances.sort((a, b) => a - b);
-
-  return distances.filter((v) => v === distances.at(-1)).length;
+  const maxValue = distances.sort((a, b) => b - a)[0];
+  return distances.filter((v) => v === maxValue).length;
 }
