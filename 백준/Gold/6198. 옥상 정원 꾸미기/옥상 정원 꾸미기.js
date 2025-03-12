@@ -13,15 +13,17 @@ let input = fs
 const N = Number(input[0]);
 const heights = input.slice(1).map((v) => Number(v));
 
-let answer = 0;
 const stack = [];
+let answer = 0;
 
 for (let i = 0; i < N; i++) {
-  while (stack.length > 0 && stack[stack.length - 1] <= heights[i]) {
+  const cur = heights[i];
+
+  while (stack.length && stack[stack.length - 1] <= cur) {
     stack.pop();
   }
-  stack.push(heights[i]);
-  answer += stack.length - 1;
+  answer += stack.length;
+  stack.push(cur);
 }
 
 console.log(answer);
