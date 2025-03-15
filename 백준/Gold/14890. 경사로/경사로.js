@@ -4,7 +4,7 @@ const filePath =
   process.platform === "linux"
     ? "/dev/stdin"
     : path.join(__dirname, "../input.txt");
-let input = fs
+const input = fs
   .readFileSync(filePath)
   .toString()
   .split("\n")
@@ -13,47 +13,46 @@ let input = fs
 const [N, L] = input[0].split(" ").map(Number);
 const map = input.slice(1, 1 + N).map((v) => v.split(" ").map(Number));
 
+// 한 줄에 대해 가능한 path 인지 확인하는 함수
 function isPossible(arr) {
-  // visited 배열은 다리를 놓은적이 있는지를 기록하는 배열
-  const visited = Array.from({ length: arr.length }).fill(false);
+  // 경사로를 놓은적이 있는지를 기록하는 배열
+  const viisted = Array.from({ length: arr.length }).fill(false);
 
   for (let i = 0; i < arr.length - 1; i++) {
     const diff = arr[i + 1] - arr[i];
 
-    if (Math.abs(diff) >= 2) return false;
     if (diff === 0) continue;
-
+    if (Math.abs(diff) >= 2) return false;
     if (diff === 1) {
-      // 오르막
+      // 오르막 설치해야함
+      // j는 배열의 인덱스와는 무관하다
       for (let j = 0; j < L; j++) {
-        if (i - j < 0 || visited[i - j] || arr[i] !== arr[i - j]) return false;
-        visited[i - j] = true;
+        if (arr[i] !== arr[i - j] || viisted[i - j] || i - j < 0) return false;
+        viisted[i - j] = true;
       }
     } else if (diff === -1) {
-      // 내리막
+      // 내리막 설치해야함
       for (let j = 1; j <= L; j++) {
-        if (i + j >= arr.length || visited[i + j] || arr[i + 1] !== arr[i + j])
+        if (arr[i + 1] !== arr[i + j] || viisted[i + j] || i + j >= arr.length)
           return false;
-        visited[i + j] = true;
+        viisted[i + j] = true;
       }
     }
   }
-  // loop 을 돌아도 별 일 안생기면 가능
+
   return true;
 }
 
-let count = 0;
+let answer = 0;
 for (let i = 0; i < N; i++) {
-  if (isPossible(map[i])) count++;
+  if (isPossible(map[i])) answer++;
 }
 
-// 열 뽑는 로직 따로 외워야 할 듯
 for (let j = 0; j < N; j++) {
-  const column = [];
+  const path = [];
   for (let i = 0; i < N; i++) {
-    column.push(map[i][j]);
+    path.push(map[i][j]);
   }
-  if (isPossible(column)) count++;
+  if (isPossible(path)) answer++;
 }
-
-console.log(count);
+console.log(answer);
