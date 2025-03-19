@@ -1,20 +1,19 @@
 function solution(numbers, target) {
-  let answer = 0;
-
-  function DFS(index, sum) {
-    if (index === numbers.length) {
-      if (sum === target) {
-        answer++;
-      }
-      return;
-    } else {
-      DFS(index + 1, sum + numbers[index]);
-      DFS(index + 1, sum - numbers[index]);
+    let answer = 0
+    function DFS(sum, count){
+        if(count === numbers.length){
+            if(sum === target) answer++
+            return
+        }
+        
+        DFS(sum + numbers[count], count+1)
+        DFS(sum - numbers[count], count+1)
     }
-  }
-
-  DFS(1, numbers[0]);
-  DFS(1, -numbers[0]);
-
-  return answer;
+    
+    DFS(0, 0)
+    
+    return answer
 }
+
+
+// 순서를 바꾸지 않고 더하거나 뺀다
