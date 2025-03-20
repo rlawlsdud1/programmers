@@ -1,45 +1,40 @@
 function solution(n, results) {
-  // 이긴 사람 기준
-  let winnerGraph = Array.from({ length: n + 1 }, () => []);
-
-  // 진 사람 기준
-  let loserGraph = Array.from({ length: n + 1 }, () => []);
-
-  results.forEach((v) => {
-    const [winner, loser] = v;
-    winnerGraph[winner].push(loser);
-    loserGraph[loser].push(winner);
-  });
-
-  function BFS(graph, player) {
-    const visited = Array.from({ length: n + 1 }).fill(false);
-    let result = 0;
-    const queue = [];
-    queue.push(player);
-    visited[player] = true;
-
-    while (queue.length) {
-      const player = queue.shift();
-      for (let i = 0; i < graph[player].length; i++) {
-        const relatedPlayer = graph[player][i];
-        if (!visited[relatedPlayer]) {
-          visited[relatedPlayer] = true;
-          queue.push(relatedPlayer);
-          result++;
+    const winnerAdjacantList = Array.from({length : n+1}, () => [])
+    const loserAdjacantList = Array.from({length : n+1}, () => [])
+    
+    results.forEach((v) => {
+        const [a, b] = v
+        winnerAdjacantList[a].push(b)
+        loserAdjacantList[b].push(a)
+    })
+    
+    function BFS(start, adjacantList){
+        const visited = Array.from({length : n + 1}).fill(false)
+        const queue = []
+        queue.push(start)
+        visited[start] = true
+        let count = 0
+        
+        while(queue.length){
+            const node = queue.shift()
+            for(const adjacantNode of adjacantList[node]){
+                if(!visited[adjacantNode]){
+                    queue.push(adjacantNode)
+                    visited[adjacantNode] = true
+                    count++
+                }
+            }
         }
-      }
+        return count
     }
-
-    return result;
-  }
-
-  let answer = 0;
-
-  for (let i = 1; i <= n; i++) {
-    if (BFS(winnerGraph, i) + BFS(loserGraph, i) === n - 1) {
-      answer++;
+    
+    let answer = 0
+    for(let i = 1; i <= n; i++){
+        if(BFS(i, winnerAdjacantList) + BFS(i, loserAdjacantList) === n - 1){
+            answer++
+        }
     }
-  }
-
-  return answer;
+    
+    return answer
 }
+
