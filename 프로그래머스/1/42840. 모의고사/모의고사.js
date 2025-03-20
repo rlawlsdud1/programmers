@@ -1,21 +1,20 @@
 function solution(answers) {
-  const first = [1, 2, 3, 4, 5];
-  const second = [2, 1, 2, 3, 2, 4, 2, 5];
-  const third = [3, 3, 1, 1, 2, 2, 4, 4, 5, 5];
-  let scoreObj = { 1: 0, 2: 0, 3: 0 };
-  for (let i = 0; i < answers.length; i++) {
-    if (answers[i] === first[i % first.length]) scoreObj[1] += 1;
-    if (answers[i] === second[i % second.length]) scoreObj[2] += 1;
-    if (answers[i] === third[i % third.length]) scoreObj[3] += 1;
-  }
-  const scoreInfo = Object.entries(scoreObj);
-  scoreInfo.sort((a, b) => b[1] - a[1]);
-  const answer = [];
-  scoreInfo
-    .filter((v) => v[1] === scoreInfo[0][1])
-    .forEach((v) => {
-      answer.push(v[0]);
-    });
-  answer.sort((a, b) => a - b);
-  return answer.map(Number);
+    const first = [1,2,3,4,5]
+    const second = [2,1,2,3,2,4,2,5]
+    const third = [3,3,1,1,2,2,4,4,5,5]
+    
+    let [firstCnt, secondCnt, thirdCnt] = [0, 0, 0]
+    answers.forEach((v, i) => {
+        if(v === first[i % 5]) firstCnt++
+        if(v === second[i % 8]) secondCnt++
+        if(v === third[i % 10]) thirdCnt++
+    })
+    const result = [firstCnt, secondCnt, thirdCnt]
+    const maxValue = Math.max(...result)
+    const answer = []
+    result.forEach((v, i) => {
+        if(v === maxValue) answer.push(i+1)
+    })
+    
+    return answer
 }
