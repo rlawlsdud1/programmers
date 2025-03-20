@@ -12,24 +12,24 @@ const input = fs
 
 const [K, N] = input[0].split(" ").map(Number);
 const info = input.slice(1, 1 + K).map(Number);
-const target = N - K;
+
+const sum = info.reduce((acc, cur) => acc + cur, 0);
+
 let left = 0;
-let right = Math.floor(info.reduce((acc, cur) => acc + cur, 0) / N);
-let answer = 0;
+let right = Math.floor(sum / N);
+
 while (left <= right) {
   const mid = Math.floor((left + right) / 2);
 
-  let sum = 0;
+  let count = 0;
   info.forEach((v) => {
-    sum += Math.floor(v / mid);
+    count += Math.floor(v / mid);
   });
 
-  if (sum >= N) {
+  if (count >= N) {
     left = mid + 1;
-    answer = Math.max(answer, mid);
   } else {
     right = mid - 1;
   }
 }
-
-console.log(answer);
+console.log(right);
