@@ -1,16 +1,17 @@
 function solution(prices) {
-    // loop 2개 돌리면 당연히 답은 나오겠지만, 당연히 시간초과 뜬다.
-    const answer = Array.from({length:prices.length}).fill(0)
+    const answer = Array.from({length : prices.length}).fill(0)
     const stack = []
     for(let i=0; i<prices.length; i++){
-        while(stack.length && prices[stack.at(-1)] > prices[i]){
-            const j = stack.pop()
-            answer[j] = i - j
+        while(prices[stack.at(-1)] > prices[i]){
+            const decreasingIdx = stack.pop()
+            answer[decreasingIdx] = i - decreasingIdx
         }
         stack.push(i)
     }
     stack.forEach((v) => {
-        answer[v] = prices.length - 1 - v
+        answer[v] = prices.length - v - 1
     })
-    return answer;
+    
+    return answer
 }
+//
