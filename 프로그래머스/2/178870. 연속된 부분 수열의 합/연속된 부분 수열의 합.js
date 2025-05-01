@@ -1,18 +1,23 @@
 function solution(sequence, k) {
-  let [l, r] = [0, 0];
-  let sum = sequence[l];
-  const answer = [];
-
-  while (r < sequence.length) {
-    if (sum < k) {
-      sum += sequence[++r];
-    } else if (sum > k) {
-      sum -= sequence[l++];
-    } else {
-      answer.push([l, r]);
-      sum += sequence[++r];
-      sum -= sequence[l++];
+    let [answerX, answerY] = [0, 0]
+    let targetLength = Infinity
+    let sum = sequence[0]
+    let left = 0, right = 0
+    
+    while(right < sequence.length){
+        if(sum === k){
+            if(targetLength > right - left){
+                answerX = left
+                answerY = right
+                targetLength = right - left
+            }
+            sum += sequence[++right]
+        }else if(sum > k){
+            sum -= sequence[left++]
+        }else{
+            sum += sequence[++right]
+        }
     }
-  }
-  return answer.sort((a, b) => a[1] - a[0] - (b[1] - b[0]))[0];
+    
+    return [answerX, answerY]
 }
