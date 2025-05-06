@@ -30,20 +30,23 @@ for (let i = 0; i < K; i++) {
 
 function isBipartite(graph) {
   const n = graph.length;
-  const color = new Array(n).fill(-1);
+  const color = Array.from({ length: n }).fill(-1); // 처음엔 전부 색칠 X
 
+  // 연결 그래프가 아닐 수도 있기에 for문 돌린다.
   for (let start = 1; start <= n; start++) {
+    // 색칠 안된 상태라면,
     if (color[start] === -1) {
       const queue = [start];
-      color[start] = 0;
+      color[start] = 0; // 색 하나 임의로 칠하기
 
-      while (queue.length > 0) {
+      while (queue.length) {
         const node = queue.shift();
-        for (const neighbor of graph[node]) {
-          if (color[neighbor] === -1) {
-            color[neighbor] = 1 - color[node];
-            queue.push(neighbor);
-          } else if (color[neighbor] === color[node]) {
+
+        for (const adjacantNode of graph[node]) {
+          if (color[adjacantNode] === -1) {
+            color[adjacantNode] = 1 - color[node]; // queue에서 꺼낸 node랑 반대 색 칠하기
+            queue.push(adjacantNode);
+          } else if (color[adjacantNode] === color[node]) {
             return false;
           }
         }
