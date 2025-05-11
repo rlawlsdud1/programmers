@@ -45,6 +45,9 @@ function DFSForCnt(vertex) {
 visited[R] = true;
 DFSForCnt(R);
 
+const result = [];
 queries.forEach((q) => {
-  console.log(dp[q]);
+  result.push(dp[q]);
 });
+
+console.log(result.join("\n"));
