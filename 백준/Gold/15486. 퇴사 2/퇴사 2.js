@@ -26,8 +26,6 @@ for (let i = N; i >= 1; i--) {
   } else {
     dp[i] = dp[i + 1];
   }
-
-  answer = Math.max(answer, dp[i]);
 }
 
-console.log(answer);
+console.log(dp[1]);
