@@ -18,6 +18,7 @@ let size = {};
 let idx = 0;
 
 for (let i = 0; i < T; i++) {
+  const answer = [];
   const F = Number(info[idx++]);
   parent = {};
   size = {};
@@ -36,8 +37,9 @@ for (let i = 0; i < T; i++) {
     }
 
     const count = union(a, b);
-    console.log(count);
+    answer.push(count);
   }
+  console.log(answer.join("\n"));
 }
 
 function find(x) {
