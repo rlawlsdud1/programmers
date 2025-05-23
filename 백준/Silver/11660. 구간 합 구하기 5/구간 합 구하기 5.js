@@ -34,11 +34,13 @@ for (let i = 2; i <= N; i++) {
   }
 }
 
+const answerToPrint = [];
 info.forEach((v) => {
   const [x1, y1, x2, y2] = v;
 
   const answer =
     dp[x2][y2] - dp[x2][y1 - 1] - dp[x1 - 1][y2] + dp[x1 - 1][y1 - 1];
 
-  console.log(answer);
+  answerToPrint.push(answer);
 });
+console.log(answerToPrint.join("\n"));
