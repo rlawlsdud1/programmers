@@ -15,42 +15,36 @@ const info = input[1].split(" ").map(Number);
 info.unshift(0);
 const relations = input.slice(2, 2 + M).map((v) => v.split(" ").map(Number));
 
-const graph = Array.from({ length: N + 1 }, () => []);
+const parent = Array.from({ length: N + 1 }, (_, i) => i);
 
-relations.forEach((v) => {
-  const [a, b] = v;
-  graph[a].push(b);
-  graph[b].push(a);
+function find(x) {
+  if (parent[x] !== x) {
+    parent[x] = find(parent[x]);
+  }
+  return parent[x];
+}
+
+function union(x, y) {
+  const rootX = find(x);
+  const rootY = find(y);
+  if (rootX === rootY) return;
+
+  if (info[rootX] < info[rootY]) parent[rootY] = rootX;
+  else parent[rootX] = rootY;
+}
+
+relations.forEach(([a, b]) => {
+  union(a, b);
 });
 
-const visited = Array.from({ length: N + 1 }).fill(false);
-visited[0] = true; // zero index는 사용 안하므로 전처리
-
-function DFS(node) {
-  for (const adjacantNode of graph[node]) {
-    if (!visited[adjacantNode]) {
-      visited[adjacantNode] = true;
-      minValue = Math.min(minValue, info[adjacantNode]);
-      DFS(adjacantNode);
-    }
-  }
-}
-
+const visited = new Set();
 let answer = 0;
-let minValue = Infinity;
 for (let i = 1; i <= N; i++) {
-  if (!visited[i]) {
-    visited[i] = true;
-    minValue = info[i];
-    DFS(i);
-    answer += minValue;
+  const root = find(i);
+  if (!visited.has(root)) {
+    visited.add(root);
+    answer += info[root];
   }
-
-  minValue = Infinity;
 }
 
-if (!visited.some((v) => v === false) && k >= answer) {
-  console.log(answer);
-} else {
-  console.log("Oh no");
-}
+console.log(k >= answer ? answer : "Oh no");
