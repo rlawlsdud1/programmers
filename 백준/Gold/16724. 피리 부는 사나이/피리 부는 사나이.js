@@ -54,7 +54,7 @@ for (let x = 0; x < N; x++) {
     if (nx >= 0 && ny >= 0 && nx < N && ny < M) {
       const next = `${nx},${ny}`;
 
-      if (find(next) !== find(cur)) union(next, cur);
+      if (find(next) !== find(cur)) union(cur, next);
     }
   }
 }
