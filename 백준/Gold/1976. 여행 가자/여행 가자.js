@@ -15,38 +15,36 @@ const M = Number(input[1]);
 const info = input.slice(2, 2 + N).map((v) => v.split(" ").map(Number));
 const plan = input[2 + N].split(" ").map(Number);
 
-// 연결 상태 정리하고, plan에 있는 노드들이 같은 루트 노드를 가리킨다면
-// 가능한 경우인 것이다
+const graph = Array.from({ length: N }, () => []);
 
-const parent = Array.from({ length: N }).map((_, i) => i);
-
-// 대칭 이루니까 loop는 다음과 같이 설정
-for (let i = 1; i < N; i++) {
-  for (let j = 0; j < i; j++) {
+for (let i = 0; i < N; i++) {
+  graph[i].push(i);
+  for (let j = i + 1; j < N; j++) {
     if (info[i][j] === 1) {
-      union(i, j);
+      graph[i].push(j);
+      graph[j].push(i);
+    }
+  }
+}
+const start = plan[0];
+const visited = new Set();
+
+function DFS(node) {
+  for (const adjacantNode of graph[node]) {
+    if (!visited.has(adjacantNode)) {
+      visited.add(adjacantNode);
+      DFS(adjacantNode);
     }
   }
 }
 
-function find(x) {
-  if (parent[x] !== x) {
-    parent[x] = find(parent[x]);
+DFS(start - 1);
+
+for (let i = 0; i < M; i++) {
+  if (!visited.has(plan[i] - 1)) {
+    console.log("NO");
+    process.exit(0);
   }
-  return parent[x];
 }
 
-function union(x, y) {
-  const rootX = find(x);
-  const rootY = find(y);
-
-  parent[rootY] = rootX;
-}
-
-const answerSet = new Set();
-plan.forEach((v) => {
-  answerSet.add(find(v - 1));
-});
-
-if (answerSet.size === 1) console.log("YES");
-else console.log("NO");
+console.log("YES");
