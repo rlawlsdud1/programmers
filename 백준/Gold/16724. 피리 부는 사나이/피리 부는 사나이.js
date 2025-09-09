@@ -23,7 +23,7 @@ const parent = {};
 
 for (let i = 0; i < N; i++) {
   for (let j = 0; j < M; j++) {
-    parent[`${i},${j}`] = `${i},${j}`;
+    parent[i * M + j] = i * M + j;
   }
 }
 
@@ -46,13 +46,13 @@ function union(x, y) {
 
 for (let x = 0; x < N; x++) {
   for (let y = 0; y < M; y++) {
-    const cur = parent[`${x},${y}`];
+    const cur = parent[x * M + y];
     const dir = map[x][y];
 
     const [nx, ny] = [x + directionObj[dir][0], y + directionObj[dir][1]];
 
     if (nx >= 0 && ny >= 0 && nx < N && ny < M) {
-      const next = `${nx},${ny}`;
+      const next = nx * M + ny;
 
       if (find(next) !== find(cur)) union(cur, next);
     }
@@ -62,7 +62,7 @@ for (let x = 0; x < N; x++) {
 const answerSet = new Set();
 for (let i = 0; i < N; i++) {
   for (let j = 0; j < M; j++) {
-    const cur = `${i},${j}`;
+    const cur = i * M + j;
     answerSet.add(find(parent[cur]));
   }
 }
