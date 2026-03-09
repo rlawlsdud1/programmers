@@ -1,13 +1,13 @@
-function solution(arr)
-{
-    const stack = []
-    for(let i = 0; i < arr.length-1; i++){
-        // while(stack.at(-1) === arr[i]){
-        //     stack.pop()
-        // }
-        // stack.push(arr[i])
-        if(arr[i] !== arr[i+1]) stack.push(arr[i])
+function solution(arr) {
+  let cur = arr[0];
+  const answer = [cur];
+
+  for (let i = 1; i < arr.length; i++) {
+    if (cur !== arr[i]) {
+      cur = arr[i];
+      answer.push(cur);
     }
-    stack.push(arr.at(-1))
-    return stack
+  }
+
+  return answer;
 }
