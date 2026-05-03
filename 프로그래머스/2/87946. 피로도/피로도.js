@@ -1,18 +1,23 @@
 function solution(k, dungeons) {
-    let answer = 0
-    const visited = Array.from({length : dungeons.length}).fill(false)
-    function DFS(hp, count){
-        answer = Math.max(answer, count)
-        
-        for(let i=0; i<dungeons.length; i++){
-            if(!visited[i] && dungeons[i][0] <= hp){
-                visited[i] = true
-                DFS(hp - dungeons[i][1], count + 1)
-                visited[i] = false
-            }
-        }
+  let answer = 0;
+
+  const n = dungeons.length;
+  const visited = new Set();
+
+  function DFS(cur_hp, visited) {
+    answer = Math.max(answer, visited.size);
+
+    for (let i = 0; i < n; i++) {
+      const [required_hp, cost] = dungeons[i];
+      if (!visited.has(i) && cur_hp >= required_hp) {
+        visited.add(i);
+        DFS(cur_hp - cost, visited);
+        visited.delete(i);
+      }
     }
-    DFS(k, 0)
-    
-    return answer
+  }
+
+  DFS(k, visited);
+
+  return answer;
 }
