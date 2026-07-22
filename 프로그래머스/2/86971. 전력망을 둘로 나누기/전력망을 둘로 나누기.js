@@ -1,40 +1,52 @@
 function solution(n, wires) {
     let answer = Infinity
-    const adjacantList = Array.from({length : n+1}, () => [])
+    
+    const graph = {}
     wires.forEach((v) => {
         const [a, b] = v
-        adjacantList[a].push(b)
-        adjacantList[b].push(a)
+        graph[a] ? graph[a].push(b) : graph[a] = [b]
+        graph[b] ? graph[b].push(a) : graph[b] = [a]
     })
     
-    function DFS(node, map, visited){
-        let count = 1
-        visited[node] = true
+    wires.forEach((v) => {
+        const [a, b] = v
+        // 간선 하나씩 끊어가면서 DFS 돌리고 각 트리의 노드 수 구하기
         
-        for(const adjacantNode of map[node]){
-            if(!visited[adjacantNode]){
-                count += DFS(adjacantNode, map, visited)
+        graph[a] = graph[a].filter((v) => v !== b)
+        graph[b] = graph[b].filter((v) => v !== a)
+        
+        let [first, second] = [0, 0]
+        const visited = Array.from({length : n + 1}).fill(false)
+        
+        for(let i = 1; i <= n; i++){
+            if(!visited[i]){
+                visited[i] = true
+                const total_count = DFS(i, graph, visited)
+                
+                if(!first) first = total_count
+                else second = total_count
             }
         }
+
+        answer = Math.min(answer, Math.abs(first - second))
         
-        return count
-    }
-    
-    wires.forEach((v) => {
-        const [a, b] = v
-        const copiedMap = JSON.parse(JSON.stringify(adjacantList))
-        const visited = Array.from({length : n+1}).fill(false)
-        copiedMap[a] = copiedMap[a].filter((v) => v !== b)
-        copiedMap[b] = copiedMap[b].filter((v) => v !== a)
-        
-        const cntOfa = DFS(a, copiedMap, visited)
-        const cntOfb = DFS(b, copiedMap, visited)
-        answer = Math.min(answer, Math.abs(cntOfa - cntOfb))
-        
-        
-        // a에서 출발, b에서 출발
-        // 차의 절댓값과 answer 비교
-        // 더 작으면 answer 갱신
+        // 그래프 원복
+        graph[a].push(b)
+        graph[b].push(a)
     })
-    return answer
+    
+    return answer;
+}
+
+function DFS(node, graph, visited){
+    let count = 1
+    
+    graph[node].forEach((v) => {
+        if(!visited[v]){
+            visited[v] = true
+            count += DFS(v, graph, visited)
+        }
+    })
+    
+    return count
 }
