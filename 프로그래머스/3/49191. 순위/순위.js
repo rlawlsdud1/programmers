@@ -1,40 +1,40 @@
 function solution(n, results) {
-    const winnerAdjacantList = Array.from({length : n+1}, () => [])
-    const loserAdjacantList = Array.from({length : n+1}, () => [])
+    let answer = 0;
+    
+    const winner_graph = Array.from({length : n + 1}, () => [])
+    const loser_graph = Array.from({length : n + 1}, () => [])
     
     results.forEach((v) => {
-        const [a, b] = v
-        winnerAdjacantList[a].push(b)
-        loserAdjacantList[b].push(a)
-    })
-    
-    function BFS(start, adjacantList){
-        const visited = Array.from({length : n + 1}).fill(false)
-        const queue = []
-        queue.push(start)
-        visited[start] = true
-        let count = 0
+        const [x, y] = v
         
-        while(queue.length){
-            const node = queue.shift()
-            for(const adjacantNode of adjacantList[node]){
-                if(!visited[adjacantNode]){
-                    queue.push(adjacantNode)
-                    visited[adjacantNode] = true
-                    count++
-                }
+        winner_graph[x].push(y)
+        loser_graph[y].push(x)
+    })
+
+    function DFS(start, visited, graph){
+        let count = 1
+        
+        for(const adjacantNode of graph[start]){
+            if(!visited[adjacantNode]){
+                visited[adjacantNode] = true
+                count += DFS(adjacantNode, visited, graph)
             }
         }
+        
         return count
     }
     
-    let answer = 0
     for(let i = 1; i <= n; i++){
-        if(BFS(i, winnerAdjacantList) + BFS(i, loserAdjacantList) === n - 1){
+        const visited_of_winner = Array.from({length : n + 1})
+        const visited_of_loser = Array.from({length : n + 1})
+        
+        const count = DFS(i, visited_of_winner, winner_graph) + DFS(i, visited_of_loser, loser_graph)
+        if(count == n + 1) {
             answer++
         }
+            
     }
     
-    return answer
+    
+    return answer;
 }
-
