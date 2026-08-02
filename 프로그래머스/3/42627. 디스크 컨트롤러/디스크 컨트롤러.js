@@ -1,57 +1,7 @@
-function compare(a, b){
-    if(a[0] !== b[0]) return a[0] - b[0]
-    if(a[1] !== b[1]) return a[1] - b[1]
-    return a[2] - b[2]
-}
-
 class Heap{
-    constructor(){
+    constructor(compare){
         this.heap = []
-    }
-    
-    push(value){
-        const heap = this.heap
-        heap.push(value)
-        
-        let idx = heap.length - 1
-        while(idx > 0){
-            const parent = Math.floor((idx - 1) / 2)
-            
-            if(compare(heap[parent], heap[idx]) < 0) break
-            
-            [heap[parent], heap[idx]] = [heap[idx], heap[parent]]
-            
-            idx = parent
-            
-        }
-    }
-    
-    pop(){
-        const heap = this.heap
-        
-        if(heap.length === 0) return undefined
-        if(heap.length === 1) return heap.pop()
-        
-        const higherPriority = heap[0]
-        heap[0] = heap.pop()
-        
-        let idx = 0
-        while(1){
-            let highestPriority = idx
-            const left = idx * 2 + 1
-            const right = idx * 2 + 2
-            
-            if(left < heap.length && compare(heap[left], heap[highestPriority]) < 0) highestPriority = left
-            if(right < heap.length && compare(heap[right], heap[highestPriority]) < 0) highestPriority = right
-            
-            if(highestPriority === idx) break
-            
-            [heap[highestPriority], heap[idx]] = [heap[idx], heap[highestPriority]]
-            
-            idx = highestPriority
-        }
-        
-        return higherPriority
+        this.compare = compare
     }
     
     size(){
@@ -61,36 +11,87 @@ class Heap{
     peek(){
         return this.heap[0]
     }
+    
+    push(value){
+        const heap = this.heap
+        heap.push(value)
+        
+        let idx = heap.length - 1
+        
+        while(idx > 0){
+            const parent = Math.floor((idx - 1) / 2)
+            
+            if(this.compare(heap[parent], heap[idx]) <= 0) break
+            
+            [heap[parent], heap[idx]] = [heap[idx], heap[parent]]
+            
+            idx = parent
+        }
+    }
+    
+    pop(){
+        const heap = this.heap
+        
+        if(heap.length === 0) return undefined
+        if(heap.length === 1) return heap.pop()
+        
+        const top = heap[0]
+        heap[0] = heap.pop()
+        
+        let idx = 0
+        while(1){
+            let best = idx
+            const left = 2 * idx + 1
+            const right = 2 * idx + 2
+            
+            if(left < heap.length && this.compare(heap[left], heap[best]) < 0) best = left
+            if(right < heap.length && this.compare(heap[right], heap[best]) < 0) best = right
+            
+            if(best === idx) break
+            
+            [heap[best], heap[idx]] = [heap[idx], heap[best]]
+            
+            idx = best
+        }
+        
+        return top
+    }
 }
 
 function solution(jobs) {
-    const pq = new Heap()
-    const n = jobs.length
-    jobs.sort((a, b) => a[0] - b[0]) // 작업 요청 시간 순으로 오름차순 정렬
+    jobs.sort((a, b) => a[0] - b[0])
     
-    let total = 0
+    const compare = (a, b) => {
+        if(a[0] !== b[0]) return a[0] - b[0]
+        if(a[1] !== b[1]) return a[1] - b[1]
+        return a[2] - b[2]
+    }
+    
+    const pq = new Heap(compare)
+    const n = jobs.length
+    let count = 0 // 하드 디스크에서 수행된 작업 수
+    let total = 0 // 누적 반환 시간
     let time = 0 // 현재 시각
-    let idx = 0 // jobs 의 pointer
-    let count = 0 // 완료된 작업 수
+    let pointer = 0
     
     while(count < n){
-        // 현 시점에서 pq에 넣을 수 있다면 넣기
-        while(idx < n && jobs[idx][0] <= time){
-            const [request, duration] = jobs[idx]
-            
-            pq.push([duration, request, idx])
-            idx++
+        while(pointer < n && time >= jobs[pointer][0]){
+            const [request, duration] = jobs[pointer]
+        
+            pq.push([duration, request, pointer])
+            pointer++
         }
         
         if(pq.size() > 0){
             const [duration, request, _] = pq.pop()
-            total += time + duration - request
-            
-            time += duration // 하드 디스크에서 작업을 바로 마쳐버리는 순간으로 점프시킴
+            time += duration
+            total += time - request
             count++
-        }else time = jobs[idx][0]
+        }else time = jobs[pointer][0]
+            
+        
     }
     
+    return Math.floor(total / n)
     
-    return Math.floor(total / n);
 }
