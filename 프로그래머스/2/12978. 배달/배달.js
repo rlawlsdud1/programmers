@@ -8,10 +8,6 @@ class Heap{
         return this.heap.length
     }
     
-    peek(){
-        return this.heap[0]
-    }
-    
     push(value){
         const heap = this.heap
         heap.push(value)
@@ -21,7 +17,7 @@ class Heap{
             const parent = Math.floor((idx - 1) / 2)
             if(this.compare(heap[parent], heap[idx]) <= 0) break
             [heap[parent], heap[idx]] = [heap[idx], heap[parent]]
-            idx = parent        
+            idx = parent
         }
     }
     
@@ -35,7 +31,7 @@ class Heap{
         heap[0] = heap.pop()
         
         let idx = 0
-        while(idx > 0){
+        while(1){
             let best = idx
             const left = 2 * idx + 1
             const right = 2 * idx + 2
@@ -55,22 +51,20 @@ class Heap{
 }
 
 function solution(N, road, K) {
-    let answer = 0;
-    
-    const pq = new Heap((a, b) => a[1] - b[1])
-    
     const graph = {}
     
     road.forEach((v) => {
         const [a, b, cost] = v
+        
         graph[a] ? graph[a].push([b, cost]) : graph[a] = [[b, cost]]
         graph[b] ? graph[b].push([a, cost]) : graph[b] = [[a, cost]]
     })
     
     const dist = Array.from({length : N + 1}).fill(Infinity)
-    dist[1] = 0
+    const pq = new Heap((a, b) => a[1] - b[1])
     
     pq.push([1, 0])
+    dist[1] = 0
     
     while(pq.size() > 0){
         const [node, cost] = pq.pop()
@@ -86,8 +80,6 @@ function solution(N, road, K) {
             }
         }
     }
-    
-    
     
     return dist.filter((v) => v <= K).length
 }
