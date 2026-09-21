@@ -1,42 +1,42 @@
 function solution(numbers) {
-  const visited = Array.from({ length: numbers.length }).fill(false);
-  const candidate = [];
+    function isPrime(n) {
+        if (n < 2) return false;
+        if (n < 4) return true;
+        if (n % 2 === 0) return false;
 
-  function DFS(path) {
-    const joinedPath = Number([...path].join(""));
-    if (path.length && !candidate.includes(joinedPath) && joinedPath) {
-      candidate.push(joinedPath);
+        for (let i = 3; i * i <= n; i += 2) {
+            if (n % i === 0) return false;
+        }
+        
+        return true;
     }
 
-    for (let i = 0; i < numbers.length; i++) {
-      if (!visited[i]) {
-        visited[i] = true;
-        path.push(numbers[i]);
-        DFS(path);
-
-        visited[i] = false;
-        path.pop();
-      }
+    const numbers_to_arr = numbers.split('')
+    let answer = 0;
+    const n = numbers.length
+    const checked = new Set()
+    
+    function DFS(num, used) {
+        
+        if(isPrime(Number(num)) && !checked.has(Number(num))) { 
+            answer++
+            checked.add(Number(num))
+        }
+        
+        for(let i = 0; i < n; i++) {
+            if(!used.has(i)){
+                used.add(i)
+                DFS(num + numbers_to_arr[i], used)
+                used.delete(i)   
+            }
+        }
     }
-  }
-
-  DFS([]);
-  let answer = 0;
-  candidate.forEach((v) => {
-    if (checkPrimary(v)) {
-      answer++;
+    
+    for(let i = 0; i < n; i++){
+        const used = new Set()
+        used.add(i)
+        DFS(numbers_to_arr[i], used)
     }
-  });
-
-  return answer;
-}
-
-function checkPrimary(num) {
-  if (num === 1) return false;
-  for (let i = 2; i <= Math.sqrt(num); i++) {
-    if (num % i === 0) {
-      return false;
-    }
-  }
-  return true;
+        
+    return answer;
 }
