@@ -1,34 +1,34 @@
 function solution(n, computers) {
-    let answer = 0
+    let answer = 0;
     
     const graph = {}
     
     for(let i = 0; i < n; i++){
-        for(let j = i+1; j < n; j++){
-            if(computers[i][j] !== 0){
-                graph[i+1] ? graph[i+1].push(j+1) : graph[i+1] = [j+1]
-                graph[j+1] ? graph[j+1].push(i+1) : graph[j+1] = [i+1]
+        for(let j = i + 1; j < n; j++){
+            if(computers[i][j]) {
+                graph[i] ? graph[i].push(j) : graph[i] = [j]
+                graph[j] ? graph[j].push(i) : graph[j] = [i]
             }
         }
     }
     
-    const visited = Array.from({length : n+1}).fill(false)
-    
-    function DFS(node, visited){
-        graph[node]?.forEach((adjacantNode) => {
-            if(!visited[adjacantNode]){
-                visited[adjacantNode] = true
+    function DFS(node, visited) {
+        for(const adjacantNode of graph[node] || []) {
+            if(!visited.has(adjacantNode)) {
+                visited.add(adjacantNode)
                 DFS(adjacantNode, visited)
             }
-        })
+        }
     }
+    const visited = new Set()
     
-    for(let i = 1; i <= n; i++){
-        if(!visited[i]){
-            answer++
+    for(let i = 0; i < n; i++){
+        if(!visited.has(i)) {
+            visited.add(i)
             DFS(i, visited)
+            answer++
         }
     }
     
-    return answer
+    return answer;
 }
