@@ -1,52 +1,53 @@
 function solution(fees, records) {
-  const answerInfo = {};
-  const carInfo = {};
-
-  records.forEach((record) => {
-    const [timeInfo, carNum, _] = record.split(" ");
-
-    if (carInfo[carNum]) {
-      answerInfo[carNum]
-        ? (answerInfo[carNum] += caculateTime(carInfo[carNum], timeInfo))
-        : (answerInfo[carNum] = caculateTime(carInfo[carNum], timeInfo));
-
-      delete carInfo[carNum];
-    } else {
-      carInfo[carNum] = timeInfo;
+    function convert_time(time) {
+        const [hour, minute] = time.split(':').map(Number)
+        
+        return hour * 60 + minute
     }
-  });
+    
+    function caculate_fee(time, fees) {
+        const [default_time, default_fee, unit_time, unit_fee] = fees
+        
+        if(default_time >= time) {
+            return default_fee
+        }else {
+            return default_fee + Math.ceil((time - default_time) / unit_time) * unit_fee
+        }
+    }
+    
+    
+    const answer = [];
+    
+    const cumulative_time = {}
+    
+    const out_in_record = {}
+    
+    records.forEach((v) => {
+        const [time, car_num, info] = v.split(' ')
+        
+        if(info === 'OUT') {
+            const difference = convert_time(time) - out_in_record[car_num]
+            
+            cumulative_time[car_num] ? cumulative_time[car_num] += difference : cumulative_time[car_num] = difference
+            
+            delete out_in_record[car_num]
+        }else {
+            out_in_record[car_num] = convert_time(time)
+        }
+    })
+    
+    const result = []
 
-  const remainCar = Object.keys(carInfo);
-  remainCar.forEach((car) => {
-    answerInfo[car]
-      ? (answerInfo[car] += caculateTime(carInfo[car], "23:59"))
-      : (answerInfo[car] = caculateTime(carInfo[car], "23:59"));
-  });
-
-  const answer = [];
-  Object.entries(answerInfo).forEach((v) => {
-    const [carNum, totalTime] = v;
-
-    answer.push([carNum, caculateFee(fees, totalTime)]);
-  });
-  answer.sort((a, b) => a[0] - b[0]);
-
-  return answer.map((v) => v[1]);
-}
-
-function caculateFee(fees, total) {
-  const [time, fee, unitTime, unitFee] = fees;
-
-  if (total <= time) return fee;
-
-  return fee + Math.ceil((total - time) / unitTime) * unitFee;
-}
-
-function caculateTime(inTime, outTime) {
-  const [inH, inM] = inTime.split(":").map(Number);
-  const [outH, outM] = outTime.split(":").map(Number);
-
-  const total = outH * 60 + outM - (inH * 60 + inM);
-
-  return total;
+    Object.entries(out_in_record).forEach(([key, value]) => {
+        const last_time = 60 * 23 + 59
+        cumulative_time[key] ? cumulative_time[key] += last_time - value : cumulative_time[key] = last_time - value
+    })
+    
+    Object.entries(cumulative_time).forEach(([key, value]) => {
+        result.push([key, caculate_fee(value, fees)])
+    })
+    
+    result.sort((a, b) => a[0] - b[0])
+    
+    return result.map((v) => v[1])
 }
