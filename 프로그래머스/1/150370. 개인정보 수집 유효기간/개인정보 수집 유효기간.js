@@ -1,32 +1,29 @@
 function solution(today, terms, privacies) {
-  const answer = [];
-  const [year, month, day] = today.split(".").map(Number);
-
-  const termsMap = {};
-  terms.forEach((term) => {
-    const [type, range] = term.split(" ");
-    termsMap[type] = Number(range);
-  });
-
-  privacies.forEach((privacy, i) => {
-    const [dayInfo, type] = privacy.split(" ");
-    getDifference(year, month, day, dayInfo);
-    termsMap[type] * 28;
-
-    if (termsMap[type] * 28 - getDifference(year, month, day, dayInfo) <= 0) {
-      answer.push(i + 1);
+    function convert_date(date) {
+        const [year, month, day] = date.split('.').map(Number)
+        
+        return (year - 1) * 12 * 28 + (month - 1) * 28 + day
     }
-  });
-
-  return answer;
-}
-
-function getDifference(year, month, day, target) {
-  const [targetYear, targetMonth, targetDay] = target.split(".").map(Number);
-
-  const todayTotal = (year - 1) * 28 * 12 + (month - 1) * 28 + day;
-  const targetTotal =
-    (targetYear - 1) * 28 * 12 + (targetMonth - 1) * 28 + targetDay;
-
-  return todayTotal - targetTotal;
+    
+    function validate_period(date, today, expiration_period) {
+        if(convert_date(today) - convert_date(date) >= expiration_period) return false
+        
+        return true
+    }
+    
+    const terms_info = {}
+    terms.forEach((v) => {
+        const [type, month] = v.split(' ')
+        terms_info[type] = Number(month) * 28
+    })
+    
+    const answer = [];
+    
+    privacies.forEach((v, i) => {
+        const [date, type] = v.split(' ')
+        if(!validate_period(date, today, terms_info[type])) answer.push(i + 1)
+    })
+    
+    
+    return answer;
 }
