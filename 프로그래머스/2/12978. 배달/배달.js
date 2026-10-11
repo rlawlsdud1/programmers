@@ -32,6 +32,7 @@ function solution(N, road, K) {
             heap[0] = heap.pop()
             
             let idx = 0
+            
             while(1) {
                 let best = idx
                 const left = 2 * idx + 1
@@ -39,7 +40,8 @@ function solution(N, road, K) {
                 
                 if(left < heap.length && this.compare(heap[left], heap[best]) < 0) best = left
                 if(right < heap.length && this.compare(heap[right], heap[best]) < 0) best = right
-                if(best === idx) break
+                
+                if(idx === best) break
                 
                 [heap[best], heap[idx]] = [heap[idx], heap[best]]
                 
@@ -52,32 +54,31 @@ function solution(N, road, K) {
     
     const graph = {}
     road.forEach((v) => {
-        const [a, b, w] = v
-        
-        graph[a] ? graph[a].push([b, w]) : graph[a] = [[b, w]]
-        graph[b] ? graph[b].push([a, w]) : graph[b] = [[a, w]]
+        const [a, b, cost] = v
+        graph[a] ? graph[a].push([b, cost]) : graph[a] = [[b, cost]]
+        graph[b] ? graph[b].push([a, cost]) : graph[b] = [[a, cost]]
     })
     
-    const heap = new Heap((a, b) => a[1] - b[1])
-    heap.push([1, 0])
+    const pq = new Heap((a, b) => a[1] - b[1])
+    pq.push([1, 0])
+    
     const dist = Array.from({length : N + 1}).fill(Infinity)
     dist[1] = 0
     
-    while(heap.size() > 0) {
-        const [node, cost] = heap.pop()
+    while(pq.size() > 0) {
+        const [node, cost] = pq.pop()
         
-        if(dist[node] < cost) continue
+        if(cost > dist[node]) continue
         
-        for(const [adjacantNode, weight] of graph[node]) {
+        for(const [next, weight] of graph[node] || []) {
             const nextCost = cost + weight
             
-            if(nextCost < dist[adjacantNode]) {
-                heap.push([adjacantNode, nextCost])
-                dist[adjacantNode] = nextCost
+            if(nextCost < dist[next]) {
+                dist[next] = nextCost
+                pq.push([next, nextCost])
             }
         }
     }
     
     return dist.filter((v) => v <= K).length
-    
 }
