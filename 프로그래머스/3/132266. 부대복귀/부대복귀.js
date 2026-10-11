@@ -39,9 +39,9 @@ function solution(n, roads, sources, destination) {
                 
                 if(left < heap.length && this.compare(heap[left], heap[best]) < 0) best = left
                 if(right < heap.length && this.compare(heap[right], heap[best]) < 0) best = right
-                if(idx === best) break
                 
-                [heap[idx], heap[best]] = [heap[best], heap[idx]]
+                if(idx === best) break
+                [heap[best], heap[idx]] = [heap[idx], heap[best]]
                 
                 idx = best
             }
@@ -51,25 +51,25 @@ function solution(n, roads, sources, destination) {
     }
     
     const graph = {}
-    
-    roads.forEach(([a, b]) => {
-        graph[a] ? graph[a].push(b) : graph[a] = [b]
-        graph[b] ? graph[b].push(a) : graph[b] = [a]
+    roads.forEach((v) => {
+        const [a, b] = v
+        graph[a] ? graph[a].push([b, 1]) : graph[a] = [[b, 1]]
+        graph[b] ? graph[b].push([a, 1]) : graph[b] = [[a, 1]]
     })
     
     const dist = Array.from({length : n + 1}).fill(Infinity)
-    const pq = new Heap((a, b) => a[1] - b[1])
-    
-    pq.push([destination, 0])
     dist[destination] = 0
+    
+    const pq = new Heap((a, b) => a[1] - b[1])
+    pq.push([destination, 0])
     
     while(pq.size() > 0) {
         const [node, cost] = pq.pop()
         
         if(cost > dist[node]) continue
         
-        for(const next of graph[node] || []) {
-            const nextCost = cost + 1
+        for(const [next, weight] of graph[node] || []) {
+            const nextCost = cost + weight
             
             if(nextCost < dist[next]) {
                 dist[next] = nextCost
@@ -78,11 +78,11 @@ function solution(n, roads, sources, destination) {
         }
     }
     
-    const result = []
+    const answer = []
     sources.forEach((v) => {
-        if(dist[v] === Infinity) result.push(-1)
-        else result.push(dist[v])
+        if(dist[v] === Infinity) answer.push(-1)
+        else answer.push(dist[v])
     })
     
-    return result
+    return answer
 }
