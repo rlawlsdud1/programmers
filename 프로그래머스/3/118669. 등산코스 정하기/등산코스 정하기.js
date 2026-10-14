@@ -2,7 +2,7 @@ function solution(n, paths, gates, summits) {
     class Heap {
         constructor(compare) {
             this.heap = []
-            this.compare= compare
+            this.compare = compare
         }
         
         size() {
@@ -38,10 +38,12 @@ function solution(n, paths, gates, summits) {
                 const right = 2 * idx + 2
                 
                 if(left < heap.length && this.compare(heap[left], heap[best]) < 0) best = left
-                if(right < heap.length && this.compare(heap[right], heap[best]) < 0) best = right
+                if(right < heap.length && this.compare(heap[right], heap[best]) < 0) best = left
+                
                 if(idx === best) break
                 
                 [heap[best], heap[idx]] = [heap[idx], heap[best]]
+                
                 idx = best
             }
             
@@ -50,6 +52,7 @@ function solution(n, paths, gates, summits) {
     }
     
     const graph = {}
+    
     paths.forEach((v) => {
         const [a, b, w] = v
         graph[a] ? graph[a].push([b, w]) : graph[a] = [[b, w]]
@@ -57,40 +60,43 @@ function solution(n, paths, gates, summits) {
     })
     
     const summit_set = new Set(summits)
+    let candidate = []
+    let intensity = Infinity
     
-    const intensity = Array.from({length : n + 1}).fill(Infinity) 
+    const time = Array.from({length : n + 1}).fill(Infinity)
     const pq = new Heap((a, b) => a[1] - b[1])
     
-    gates.forEach((v) => {
-        intensity[v] = 0
-        pq.push([v, 0])        
+    gates.forEach((start) => {
+        time[start] = 0
+        pq.push([start, 0])
     })
     
     while(pq.size() > 0) {
         const [node, cost] = pq.pop()
-        
-        if(cost > intensity[node]) continue
-        
-        if(summit_set.has(node)) continue
-        
-        for(const [nextNode, nextCost] of graph[node]) {
-            const nextIntensity = Math.max(cost, nextCost)
             
-            if(nextIntensity < intensity[nextNode]) {
-                intensity[nextNode] = nextIntensity
-                pq.push([nextNode, nextIntensity])
+        if(cost > time[node]) continue
+        if(summit_set.has(node)) continue // 정상 도착했다면 버림
+            
+        for(const [next, weight] of graph[node]) {
+            const nextCost = Math.max(cost, weight)
+                
+            if(nextCost < time[next]) {
+                time[next] = nextCost
+                pq.push([next, nextCost])
             }
         }
     }
-    
-    summits.sort((a, b) => a - b)
-    let min_intensity = Infinity
-    summits.forEach((v) => {
-        min_intensity = Math.min(min_intensity, intensity[v])
+        
+    // 다익스트라 돌리고 summits 순회하면서 최솟값 갱신
+    summits.forEach((summit) => {
+        if(time[summit] < intensity) {
+            candidate = [summit]
+            intensity = time[summit]
+        } else if (time[summit] === intensity) candidate.push(summit)
     })
     
-    const best = summits.find((v) => intensity[v] === min_intensity);
-    return [best, min_intensity];
+    candidate.sort((a, b) => a - b)
     
-    
+    return [candidate[0], intensity]
 }
+
