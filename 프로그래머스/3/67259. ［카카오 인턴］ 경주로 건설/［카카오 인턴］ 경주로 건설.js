@@ -37,8 +37,8 @@ function solution(board) {
                 const left = 2 * idx + 1
                 const right = 2 * idx + 2
                 
-                if(left < heap.length && this.compare(heap[left], heap[left]) < 0) best = left
-                if(right < heap.length && this.compare(heap[right], heap[left]) < 0) best = right
+                if(left < heap.length && this.compare(heap[left], heap[best]) < 0) best = left
+                if(right < heap.length && this.compare(heap[right], heap[best]) < 0) best = right
                 
                 if(idx === best) break
                 
