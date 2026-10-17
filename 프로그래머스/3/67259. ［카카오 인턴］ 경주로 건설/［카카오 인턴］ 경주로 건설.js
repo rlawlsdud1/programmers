@@ -96,5 +96,6 @@ function solution(board) {
         }
     }
     
+    
     return Math.min(...costs[n - 1][n - 1])
 }
