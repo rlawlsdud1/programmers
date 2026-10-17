@@ -67,13 +67,15 @@ function solution(board) {
     pq.push([0, 0, 0, 2])
     
     const costs = Array.from({length : n}, () => Array.from({length : n}, () => Array.from({length : 5}).fill(Infinity)))
-    costs[0][0][1] = 0
-    costs[0][0][2] = 0
-    costs[0][0][3] = 0
-    costs[0][0][4] = 0
+    
+    for(let dir = 1; dir <= 4; dir++) {
+        costs[0][0][dir] = 0
+    }
     
     while(pq.size() > 0) {
         const [x, y, cost, dir] = pq.pop()
+        
+        if(cost > costs[x][y][dir]) continue
         
         for(let direction = 1; direction <= 4; direction++) {
             const [dx, dy] = [directions[direction][0], directions[direction][1]]
