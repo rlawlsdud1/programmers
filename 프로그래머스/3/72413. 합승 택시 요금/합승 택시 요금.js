@@ -37,8 +37,8 @@ function solution(n, s, a, b, fares) {
                 const left = 2 * idx + 1
                 const right = 2 * idx + 2
                 
-                if(left < heap.length && this.compare(heap[left], heap[idx]) < 0) best = left
-                if(right < heap.length && this.compare(heap[right], heap[idx]) < 0) best = right
+                if(left < heap.length && this.compare(heap[left], heap[best]) < 0) best = left
+                if(right < heap.length && this.compare(heap[right], heap[best]) < 0) best = right
                 
                 if(idx === best) break
                 
@@ -51,19 +51,10 @@ function solution(n, s, a, b, fares) {
         }
     }
     
-    const graph = {}
-    fares.forEach((v) => {
-        const [a, b, cost] = v
-        
-        graph[a] ? graph[a].push([b, cost]) : graph[a] = [[b, cost]]
-        graph[b] ? graph[b].push([a, cost]) : graph[b] = [[a, cost]]
-    })
-    
-    function Dijkstra(n, start, graph) {
-        const dist = Array.from({length : n + 1}).fill(Infinity)
+    function dijkstra(graph, dist, start) {
         const pq = new Heap((a, b) => a[1] - b[1])
-        
         pq.push([start, 0])
+        
         dist[start] = 0
         
         while(pq.size() > 0) {
@@ -80,24 +71,28 @@ function solution(n, s, a, b, fares) {
                 }
             }
         }
-        
-        return dist
     }
     
-    const dist_A = Dijkstra(n, a, graph)
-    const dist_B = Dijkstra(n, b, graph)
-    const dist_start = Dijkstra(n, s, graph)
+    const graph = {}
+    fares.forEach((v) => {
+        const [a, b, cost] = v
+        graph[a] ? graph[a].push([b, cost]) : graph[a] = [[b, cost]]
+        graph[b] ? graph[b].push([a, cost]) : graph[b] = [[a, cost]]
+    })
+    
+    const dist_from_start = Array.from({length : n + 1}).fill(Infinity)
+    
+    dijkstra(graph, dist_from_start, s)
     
     let answer = Infinity
     
-    for(let node = 1; node <= n; node++){
-        const result = dist_A[node] + dist_B[node] + dist_start[node]
+    for(let node = 1; node <= n; node++) {
+        const dist_from_node = Array.from({length : n + 1}).fill(Infinity)
+        dijkstra(graph, dist_from_node, node)
         
-        answer = Math.min(answer, result)
+        answer = Math.min(answer, dist_from_start[node] + dist_from_node[a] + dist_from_node[b])
     }
     
+    return answer
     
-    
-    
-    return answer;
 }
